@@ -1,0 +1,16 @@
+spring.datasource.url=jdbc:mysql://localhost:3307/chatop_db
+spring.datasource.username=root
+spring.datasource.password=password
+# spring.jpa.show-sql = true
+
+#spring.security.user.name=admin
+#spring.security.user.password=password
+
+spring.jpa.open-in-view=false
+
+#spring.jpa.hibernate.ddl-auto=none
+
+#spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+
+# Please note, this disables Spring Boot security (for example for tests). Don't forget to comment out this parameter in production.
+#spring.autoconfigure.exclude=org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
