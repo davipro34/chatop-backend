@@ -33,6 +33,12 @@ Prior to executing the ChaTop Backend API, adhere to these installation procedur
 - `MYSQL_USER`: Your MySQL username.mysql_database
 - `MYSQL_PASSWORD`: Your MySQL password.
 
+### Necessary SQL database configuration
+
+You must use this SQL script file for creating the tables in the database :
+
+- [SQL Script](src/main/resources/scripts/sql/sql_minus_updated.sql)
+
 ## Executing the application
 
 ### Launch the application by executing the JAR file
@@ -45,7 +51,7 @@ Prior to executing the ChaTop Backend API, adhere to these installation procedur
 
 You can use [Postman](https://www.postman.com/) to test the ChaTop API. Download the Postman collection and environment script:
 
-- [ChaTop API Postman Collection](src/main/resources/script/Rest Chaton.postman_collection.json)
+- [ChaTop API Postman Collection](src/main/resources/scripts/postnam/rental.postman_collection.json)
 
 ## Conducting tests using Swagger UI
 - Run the application ChaTop API
