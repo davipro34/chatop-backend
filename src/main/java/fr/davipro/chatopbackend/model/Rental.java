@@ -48,7 +48,7 @@ public class Rental {
     private Date updatedAt;
 
     @ManyToOne(
-        fetch = FetchType.LAZY,
+        fetch = FetchType.EAGER,
         cascade = {
             CascadeType.PERSIST,
             CascadeType.MERGE,
