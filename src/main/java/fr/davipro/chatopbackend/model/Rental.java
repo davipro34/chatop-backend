@@ -58,8 +58,6 @@ public class Rental {
     @JoinColumn(name="owner_id")
     private User user;
 
-    // Getters and setters...
-
     public int getId() {
         return id;
     }

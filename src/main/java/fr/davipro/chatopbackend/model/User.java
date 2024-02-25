@@ -37,8 +37,6 @@ public class User {
     @Temporal(TemporalType.TIMESTAMP)
     private Date updatedAt;
 
-    // Getters and setters...
-
     public int getId() {
         return id;
     }

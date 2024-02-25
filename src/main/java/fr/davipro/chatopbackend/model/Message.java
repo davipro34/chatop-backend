@@ -31,8 +31,6 @@ public class Message {
     @Temporal(TemporalType.TIMESTAMP)
     private Date updatedAt;
 
-    // Getters and setters...
-
     public int getId() {
         return id;
     }
