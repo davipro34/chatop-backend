@@ -3,6 +3,8 @@ package fr.davipro.chatopbackend.dto;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 public class RentalDTO {
 
     private Long id;
@@ -12,7 +14,11 @@ public class RentalDTO {
     private String picture;
     private String description;
     private Long owner_id;
+    
+    @JsonFormat(pattern = "yyyy/MM/dd")
     private LocalDateTime created_at;
+
+    @JsonFormat(pattern = "yyyy/MM/dd")
     private LocalDateTime updated_at;
 
     public Long getId() {
