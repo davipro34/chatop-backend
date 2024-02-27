@@ -11,12 +11,20 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 @EnableWebSecurity
 public class SpringSecurityConfig {
+	// @Bean
+	// public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+	// 	return http.authorizeHttpRequests(auth -> {
+	// 		auth.anyRequest().authenticated();
+	// 	}).formLogin(Customizer.withDefaults()).build();
+	// }
+
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 		return http.authorizeHttpRequests(auth -> {
 			auth.anyRequest().permitAll();
-		}).formLogin(Customizer.withDefaults()).build();
+		}).build();
 	}
+
 	
 	@Bean
 	public BCryptPasswordEncoder passwordEncoder() {
