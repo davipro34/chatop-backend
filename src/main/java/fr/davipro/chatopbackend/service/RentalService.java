@@ -27,8 +27,14 @@ public class RentalService {
         return rentalsDTOs;
     }
 
-    public Optional<Rental> getRentalById(Integer id) {
-        return rentalRepository.findById(id);
+    public Optional<RentalDTO> getRentalById(Integer id) {
+        Optional<Rental> rental = rentalRepository.findById(id);
+        if(rental.isPresent()) {
+            RentalDTO rentalDTO = convert(rental.get());
+            return Optional.of(rentalDTO);
+        } else {
+            return Optional.empty();
+        }
     }
 
     public Rental saveRental(Rental rental) {

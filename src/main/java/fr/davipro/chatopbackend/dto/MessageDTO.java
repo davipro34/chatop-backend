@@ -6,10 +6,10 @@ import lombok.Data;
 
 @Data
 public class MessageDTO {
-    private Long id;
+    private Integer id;
     private String message;
-    private Long user_id;
-    private Long rental_id;
+    private Integer user_id;
+    private Integer rental_id;
     private LocalDateTime created_at;
     private LocalDateTime updated_at;
 }

@@ -21,7 +21,7 @@ public class Rental {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
 
     private String name;
 
@@ -50,11 +50,11 @@ public class Rental {
     @JoinColumn(name="owner_id")
     private User owner;
 
-    public Long getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 

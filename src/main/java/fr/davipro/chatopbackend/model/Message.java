@@ -17,7 +17,7 @@ public class Message {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
 
     private String message;
 
@@ -27,11 +27,11 @@ public class Message {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
-    public Long getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
