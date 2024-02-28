@@ -21,7 +21,7 @@ public class RentalService {
         Iterable<Rental> rentals = rentalRepository.findAll();
         List<RentalDTO> rentalsDTOs = new ArrayList<>();
         for (Rental rental : rentals) {
-            RentalDTO rentalDTO = convert(rental);
+            RentalDTO rentalDTO = convertRentalToDTO(rental);
             rentalsDTOs.add(rentalDTO);
         }
         return rentalsDTOs;
@@ -30,22 +30,14 @@ public class RentalService {
     public Optional<RentalDTO> getRentalById(Integer id) {
         Optional<Rental> rental = rentalRepository.findById(id);
         if(rental.isPresent()) {
-            RentalDTO rentalDTO = convert(rental.get());
+            RentalDTO rentalDTO = convertRentalToDTO(rental.get());
             return Optional.of(rentalDTO);
         } else {
             return Optional.empty();
         }
     }
 
-    public Rental saveRental(Rental rental) {
-        return rentalRepository.save(rental);
-    }
-
-    public void deleteRentalById(Integer id) {
-        rentalRepository.deleteById(id);
-    }
-
-    private RentalDTO convert(Rental entity) {
+    private RentalDTO convertRentalToDTO(Rental entity) {
         RentalDTO rentalDTO = new RentalDTO();
         rentalDTO.setId(entity.getId());
         rentalDTO.setName(entity.getName());
