@@ -1,3 +1,7 @@
+DROP TABLE IF EXISTS `messages`;
+DROP TABLE IF EXISTS `rentals`;
+DROP TABLE IF EXISTS `users`;
+
 CREATE TABLE `users` (
   `id` integer PRIMARY KEY AUTO_INCREMENT,
   `email` varchar(255),
