@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import fr.davipro.chatopbackend.dto.RentalDTO;
+import fr.davipro.chatopbackend.mapper.RentalToDTOMapper;
 import fr.davipro.chatopbackend.model.Rental;
 import fr.davipro.chatopbackend.repository.RentalRepository;
 
@@ -15,39 +16,28 @@ import fr.davipro.chatopbackend.repository.RentalRepository;
 public class RentalService {
 
     @Autowired
+    private RentalToDTOMapper rentalToDTOMapper;
+
+    @Autowired
     private RentalRepository rentalRepository;
 
     public List<RentalDTO> getRentals() {
         Iterable<Rental> rentals = rentalRepository.findAll();
-        List<RentalDTO> rentalsDTOs = new ArrayList<>();
+        List<RentalDTO> rentalsDTO = new ArrayList<>();
         for (Rental rental : rentals) {
-            RentalDTO rentalDTO = convertRentalToDTO(rental);
-            rentalsDTOs.add(rentalDTO);
+            RentalDTO rentalDTO = rentalToDTOMapper.apply(rental);
+            rentalsDTO.add(rentalDTO);
         }
-        return rentalsDTOs;
+        return rentalsDTO;
     }
 
     public Optional<RentalDTO> getRentalById(Integer id) {
         Optional<Rental> rental = rentalRepository.findById(id);
         if(rental.isPresent()) {
-            RentalDTO rentalDTO = convertRentalToDTO(rental.get());
+            RentalDTO rentalDTO = rentalToDTOMapper.apply(rental.get());
             return Optional.of(rentalDTO);
         } else {
             return Optional.empty();
         }
-    }
-
-    private RentalDTO convertRentalToDTO(Rental entity) {
-        RentalDTO rentalDTO = new RentalDTO();
-        rentalDTO.setId(entity.getId());
-        rentalDTO.setName(entity.getName());
-        rentalDTO.setSurface(entity.getSurface());
-        rentalDTO.setPrice(entity.getPrice());
-        rentalDTO.setPicture(entity.getPicture());
-        rentalDTO.setDescription(entity.getDescription());
-        rentalDTO.setOwner_id(entity.getOwner().getId());
-        rentalDTO.setCreated_at(entity.getCreated_at());
-        rentalDTO.setUpdated_at(entity.getUpdated_at());
-        return rentalDTO;
     }
 }
