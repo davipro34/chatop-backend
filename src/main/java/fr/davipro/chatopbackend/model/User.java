@@ -1,5 +1,6 @@
 package fr.davipro.chatopbackend.model;
 
+import java.util.List;
 import java.time.LocalDateTime;
 
 import org.hibernate.annotations.CreationTimestamp;
@@ -10,6 +11,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.persistence.OneToMany;
 import lombok.Data;
 
 @Data
@@ -32,4 +34,7 @@ public class User {
 
     @UpdateTimestamp
     private LocalDateTime updatedAt;
+
+    @OneToMany(mappedBy = "owner")
+    private List<Rental> rentals;
 }

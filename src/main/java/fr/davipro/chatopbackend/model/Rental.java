@@ -54,8 +54,7 @@ public class Rental {
         fetch = FetchType.EAGER,
         cascade = {
             CascadeType.PERSIST,
-            CascadeType.MERGE,
-            CascadeType.REMOVE
+            CascadeType.MERGE
         }
     )
     @JoinColumn(name="owner_id")
