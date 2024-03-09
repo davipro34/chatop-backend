@@ -69,31 +69,33 @@ public class RentalService {
     
     @Transactional
     public RentalDTO addRental(RentalDTO rentalDTO) {
-
-        // Convert DTO to entity
-        Rental rental = dtoToRentalMapper.apply(rentalDTO);
-    
-        // Verify if proprietary's ID is null
+            // Convert DTO to entity
+        Rental rental = dtoToRentalMapper.createNew(rentalDTO);
+            // Verify if proprietary's ID is null
         if (rentalDTO.getOwnerId() == null) {
             // Define a fix value "1" for ownerId (for tests before token implementation)
             rentalDTO.setOwnerId(1);
         }
-    
-        // Fetch user
+            // Fetch user
         Optional<User> ownerOptional = userRepository.findById(rentalDTO.getOwnerId());
         if (ownerOptional.isPresent()) {
             rental.setOwner(ownerOptional.get());
         } else {
             throw new RuntimeException("User not found with id " + rentalDTO.getOwnerId());
         }
-    
-        // Persist entity
+            // Persist entity
         Rental savedRental = saveOrUpdate(rental);
-    
-        // Convert the registered entity to DTO
+            // Convert the registered entity to DTO
         RentalDTO savedRentalDTO = rentalToDTOMapper.apply(savedRental);
-    
         return savedRentalDTO;
+    }
+
+    public RentalDTO updateRental(RentalDTO rentalDTO, Integer id) {
+        Rental rental = rentalRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Rental not found with id " + id));
+        dtoToRentalMapper.updateExisting(rentalDTO, rental);
+        rentalRepository.save(rental);
+        return rentalDTO;
     }
 
     // Here we use EntityManager to persist or update the owner in the same hibernate session as the persistence of the rental.
@@ -107,6 +109,7 @@ public class RentalService {
         return rental;
     }
 
+    // Here we use cloudinary to upload file to cloud storage and return url
     public String storeFile(MultipartFile file) {
         try {
             File uploadedFile = convertMultiPartToFile(file);
@@ -118,6 +121,9 @@ public class RentalService {
         }
     }
 
+    // The convertMultiPartToFile method converts a MultipartFile object to a File object,
+    // creates a new File object with the original name of the downloaded file,
+    // writes the bytes of the downloaded file to the new File object and returns it.
     private File convertMultiPartToFile(MultipartFile file) throws IOException {
         File convFile = new File(file.getOriginalFilename());
         FileOutputStream fos = new FileOutputStream(convFile);

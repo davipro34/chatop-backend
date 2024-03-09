@@ -11,7 +11,7 @@ import fr.davipro.chatopbackend.model.User;
 import fr.davipro.chatopbackend.service.UserService;
 
 @Component
-public class DTOToRentalMapper implements Function<RentalDTO, Rental> {
+public class DTOToRentalMapper {
 
     private final UserService userService;
 
@@ -19,14 +19,16 @@ public class DTOToRentalMapper implements Function<RentalDTO, Rental> {
         this.userService = userService;
     }
 
-    @Override
-    public Rental apply(RentalDTO rentalDTO) {
+    public Rental createNew(RentalDTO rentalDTO) {
         Rental rental = new Rental();
         rental.setName(rentalDTO.getName());
         rental.setSurface(rentalDTO.getSurface());
         rental.setPrice(rentalDTO.getPrice());
         rental.setPicture(rentalDTO.getPicture());
         rental.setDescription(rentalDTO.getDescription());
+        rental.setCreatedAt(rentalDTO.getCreatedAt());
+        rental.setUpdatedAt(rentalDTO.getUpdatedAt());
+
 
         // Code original pour définir le propriétaire de la location en fonction de rentalDTO.getOwnerId()
         // Décommentez ce code lorsque je serai prêt à utiliser l'authentification par token
@@ -41,4 +43,20 @@ public class DTOToRentalMapper implements Function<RentalDTO, Rental> {
     
         return rental;
     }
+
+    public Rental updateExisting(RentalDTO rentalDTO, Rental rental) {
+        rental.setName(rentalDTO.getName());
+        rental.setSurface(rentalDTO.getSurface());
+        rental.setPrice(rentalDTO.getPrice());
+        if (rentalDTO.getPicture() != null) {
+            rental.setPicture(rentalDTO.getPicture());
+        }
+        rental.setDescription(rentalDTO.getDescription());
+        if (rentalDTO.getCreatedAt() != null) {
+            rental.setCreatedAt(rentalDTO.getCreatedAt());
+        }
+        rental.setUpdatedAt(rentalDTO.getUpdatedAt());
+        return rental;
+    }
+
 }
