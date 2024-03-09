@@ -1,23 +1,12 @@
 package fr.davipro.chatopbackend.mapper;
 
-import java.util.Optional;
-import java.util.function.Function;
-
 import org.springframework.stereotype.Component;
 
 import fr.davipro.chatopbackend.dto.RentalDTO;
 import fr.davipro.chatopbackend.model.Rental;
-import fr.davipro.chatopbackend.model.User;
-import fr.davipro.chatopbackend.service.UserService;
 
 @Component
 public class DTOToRentalMapper {
-
-    private final UserService userService;
-
-    public DTOToRentalMapper(UserService userService) {
-        this.userService = userService;
-    }
 
     public Rental createNew(RentalDTO rentalDTO) {
         Rental rental = new Rental();
