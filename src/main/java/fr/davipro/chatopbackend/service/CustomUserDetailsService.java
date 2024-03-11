@@ -18,6 +18,12 @@ public class CustomUserDetailsService implements UserDetailsService {
         this.userRepository = userRepository;
     }
 
+    /**
+     * Loads a user by the given username.
+     * @param username the username to load the user by
+     * @return the UserDetails object representing the user
+     * @throws UsernameNotFoundException if the user is not found
+     */
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepository.findByEmail(username)
@@ -25,13 +31,11 @@ public class CustomUserDetailsService implements UserDetailsService {
                     System.out.println("User not found with email : " + username);
                     return new UsernameNotFoundException("User not found with email : " + username);
                 });
-
-        System.out.println("User found with email : " + username); // Utilisateur trouvé
-
+    
         return org.springframework.security.core.userdetails.User
                 .withUsername(user.getEmail())
-                .password("{bcrypt}" + user.getPassword()) // Ajoutez le préfixe {bcrypt} ici
-                .authorities(new ArrayList<>()) // Vous pouvez ajouter des autorités si vous en avez
+                .password(user.getPassword())
+                .authorities(new ArrayList<>()) // If necessary, add authorities here
                 .accountExpired(false)
                 .accountLocked(false)
                 .credentialsExpired(false)
