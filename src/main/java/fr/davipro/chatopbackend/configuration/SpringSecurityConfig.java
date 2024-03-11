@@ -1,6 +1,8 @@
 package fr.davipro.chatopbackend.configuration;
 
-import javax.crypto.spec.SecretKeySpec;
+import java.security.PublicKey;
+import java.security.interfaces.RSAPublicKey;
+import java.util.UUID;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -10,21 +12,23 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
-import com.nimbusds.jose.jwk.source.ImmutableSecret;
+import com.nimbusds.jose.jwk.JWKSet;
+import com.nimbusds.jose.jwk.RSAKey;
+import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
+import com.nimbusds.jose.jwk.source.JWKSource;
+import com.nimbusds.jose.proc.SecurityContext;
 
 import fr.davipro.chatopbackend.service.CustomUserDetailsService;
+import fr.davipro.chatopbackend.service.KeyPairService;
 
 @Configuration
 public class SpringSecurityConfig {
-    
-    private String jwtKey = "52d37c77c399f38e764a0ac61dfb741374735afa66ab0e7cf970b19498c89b76";
 
     private final CustomUserDetailsService userDetailsService;
     private final BCryptPasswordEncoder passwordEncoder;
@@ -57,13 +61,19 @@ public class SpringSecurityConfig {
     }
 
     @Bean
-	public JwtEncoder jwtEncoder() {
-		return new NimbusJwtEncoder(new ImmutableSecret<>(this.jwtKey.getBytes()));
-	}
+    public JwtEncoder jwtEncoder(KeyPairService keyPairService) {
+        RSAKey rsaKey = new RSAKey.Builder((RSAPublicKey) keyPairService.getKeyPair().getPublic())
+            .privateKey(keyPairService.getKeyPair().getPrivate())
+            .keyID(UUID.randomUUID().toString())
+            .build();
+        JWKSource<SecurityContext> jwkSource = new ImmutableJWKSet<>(new JWKSet(rsaKey));
+        return new NimbusJwtEncoder(jwkSource);
+    }
 
     @Bean
-    public JwtDecoder jwtDecoder() {
-        SecretKeySpec secretKey = new SecretKeySpec(this.jwtKey.getBytes(), "HmacSHA256");
-        return NimbusJwtDecoder.withSecretKey(secretKey).macAlgorithm(MacAlgorithm.HS256).build();
+    public JwtDecoder jwtDecoder(KeyPairService keyPairService) {
+        PublicKey publicKey = keyPairService.getKeyPair().getPublic();
+        RSAPublicKey rsaPublicKey = (RSAPublicKey) publicKey;
+        return NimbusJwtDecoder.withPublicKey(rsaPublicKey).build();
     }
 }
