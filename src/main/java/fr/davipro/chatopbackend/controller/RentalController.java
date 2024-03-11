@@ -113,9 +113,11 @@ public class RentalController {
 		@RequestParam("name") String name,
 		@RequestParam("surface") BigDecimal surface,
 		@RequestParam("price") BigDecimal price,
-		@RequestParam("description") String description,
-		@RequestParam(value = "picture", required = false) MultipartFile picture) {
-	
+		@RequestParam("description") String description)
+		{
+		
+		// @RequestParam(value = "picture", required = false) MultipartFile picture) {
+		
 		Optional<RentalDTO> existingRentalOptional = rentalService.getRentalById(id);
 		if (!existingRentalOptional.isPresent()) {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Rental not found with id " + id);
@@ -127,10 +129,10 @@ public class RentalController {
 		existingRental.setPrice(price);
 		existingRental.setDescription(description);
 	
-		if (picture != null) {
-			String picturePath = rentalService.storeFile(picture);
-			existingRental.setPicture(picturePath);
-		}
+		// if (picture != null) {
+		// 	String picturePath = rentalService.storeFile(picture);
+		// 	existingRental.setPicture(picturePath);
+		// }
 	
 		existingRental.setUpdatedAt(LocalDateTime.now());
 	
