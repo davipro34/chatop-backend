@@ -3,18 +3,17 @@ package fr.davipro.chatopbackend.controller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import fr.davipro.chatopbackend.service.JWTService;
@@ -49,7 +48,7 @@ public class AuthController {
             Authentication authenticate = authenticationManager
                 .authenticate(new UsernamePasswordAuthenticationToken(userDto.getLogin(), userDto.getPassword()));
     
-            UserDetails authenticatedUser = (UserDetails) authenticate.getPrincipal();
+            // UserDetails authenticatedUser = (UserDetails) authenticate.getPrincipal();
     
             String token = jwtService.generateToken(authenticate);
             logger.info("Token is : " + token);
@@ -61,11 +60,10 @@ public class AuthController {
     }
 
     @GetMapping("/auth/me")
-    public ResponseEntity<User> getAuthenticatedUser(@AuthenticationPrincipal UserDetails userDetails) {
-        if (userDetails == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
-        User user = userService.findByEmail(userDetails.getUsername());
-        return ResponseEntity.ok(user);
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public ResponseEntity<UserDTO> getCurrentUser(Authentication authentication) {
+        UserDTO userDTO = userService.getCurrentUser(authentication);
+        return ResponseEntity.ok(userDTO);
     }
 }

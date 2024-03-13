@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,6 +17,8 @@ import org.springframework.transaction.annotation.Transactional;
 import jakarta.persistence.EntityManager;
 
 import fr.davipro.chatopbackend.dto.RentalDTO;
+import fr.davipro.chatopbackend.dto.UserDTO;
+import fr.davipro.chatopbackend.exception.UserNotFoundException;
 import fr.davipro.chatopbackend.mapper.DTOToRentalMapper;
 import fr.davipro.chatopbackend.mapper.RentalToDTOMapper;
 import fr.davipro.chatopbackend.model.Rental;
@@ -47,6 +50,9 @@ public class RentalService {
     @Autowired
     private Cloudinary cloudinary;
 
+    @Autowired
+    private UserService userService;
+
     public List<RentalDTO> getRentals() {
         Iterable<Rental> rentals = rentalRepository.findAll();
         List<RentalDTO> rentalsDTO = new ArrayList<>();
@@ -68,24 +74,29 @@ public class RentalService {
     }
     
     @Transactional
-    public RentalDTO addRental(RentalDTO rentalDTO) {
-            // Convert DTO to entity
+    public RentalDTO addRental(RentalDTO rentalDTO, String email) {
+        // Convert DTO to entity
         Rental rental = dtoToRentalMapper.createNew(rentalDTO);
-            // Verify if proprietary's ID is null
-        if (rentalDTO.getOwnerId() == null) {
-            // Define a fix value "1" for ownerId (for tests before token implementation)
-            rentalDTO.setOwnerId(1);
+        
+        // Get current user
+        UserDTO currentUserDTO = userService.getCurrentUserByEmail(email);
+        if (currentUserDTO == null) {
+            throw new UserNotFoundException("User not found with email: " + email);
         }
-            // Fetch user
-        Optional<User> ownerOptional = userRepository.findById(rentalDTO.getOwnerId());
+        Integer currentUserId = currentUserDTO.getId();
+        
+        // Fetch user
+        Optional<User> ownerOptional = userRepository.findById(currentUserId);
         if (ownerOptional.isPresent()) {
             rental.setOwner(ownerOptional.get());
         } else {
-            throw new RuntimeException("User not found with id " + rentalDTO.getOwnerId());
+            throw new UserNotFoundException("User not found with id " + currentUserId + " and email " + email);
         }
-            // Persist entity
+        
+        // Persist entity
         Rental savedRental = saveOrUpdate(rental);
-            // Convert the registered entity to DTO
+        
+        // Convert the registered entity to DTO
         RentalDTO savedRentalDTO = rentalToDTOMapper.apply(savedRental);
         return savedRentalDTO;
     }

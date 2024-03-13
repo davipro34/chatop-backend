@@ -37,4 +37,5 @@ public class User {
 
     @OneToMany(mappedBy = "owner")
     private List<Rental> rentals;
+
 }
