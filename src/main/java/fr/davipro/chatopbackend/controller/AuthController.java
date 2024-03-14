@@ -18,6 +18,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import fr.davipro.chatopbackend.service.JWTService;
 import fr.davipro.chatopbackend.service.UserService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import fr.davipro.chatopbackend.dto.UserDTO;
 import fr.davipro.chatopbackend.model.User;
@@ -36,19 +41,30 @@ public class AuthController {
 
     Logger logger = LoggerFactory.getLogger(AuthController.class);
 
+    @Operation(summary = "Register a new user", description = "This operation registers a new user with the provided details and returns the registered user.")
+    @ApiResponses(value = { 
+        @ApiResponse(responseCode = "200", description = "User registered successfully", content = { 
+            @Content(mediaType = "application/json", schema = @Schema(implementation = User.class)) }),
+    @ApiResponse(responseCode = "400", description = "Invalid input", content = @Content), 
+    @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content), 
+    @ApiResponse(responseCode = "500", description = "Server error", content = @Content) })
     @PostMapping("/auth/register")
     public ResponseEntity<User> registerUser(@RequestBody User user) {
         User registeredUser = userService.registerUser(user);
         return ResponseEntity.ok(registeredUser);
     }
     
+    @Operation(summary = "Log in a user", description = "This operation logs in a user with the provided details and returns a token.")
+    @ApiResponses(value = { 
+        @ApiResponse(responseCode = "200", description = "User logged in successfully", content = { 
+            @Content(mediaType = "application/json", schema = @Schema(implementation = String.class)) }),
+    @ApiResponse(responseCode = "401", description = "Invalid login credentials", content = @Content), 
+    @ApiResponse(responseCode = "500", description = "Server error", content = @Content)})
     @PostMapping("/auth/login")
     public ResponseEntity<String> login(@RequestBody @Valid UserDTO userDto) {
         try {
             Authentication authenticate = authenticationManager
                 .authenticate(new UsernamePasswordAuthenticationToken(userDto.getLogin(), userDto.getPassword()));
-    
-            // UserDetails authenticatedUser = (UserDetails) authenticate.getPrincipal();
     
             String token = jwtService.generateToken(authenticate);
             logger.info("Token is : " + token);
@@ -59,6 +75,12 @@ public class AuthController {
         }
     }
 
+    @Operation(summary = "Get current user", description = "This operation returns the details of the currently authenticated user.")
+    @ApiResponses(value = { 
+        @ApiResponse(responseCode = "200", description = "User details retrieved successfully", content = { 
+            @Content(mediaType = "application/json", schema = @Schema(implementation = UserDTO.class)) }),
+    @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content), 
+    @ApiResponse(responseCode = "500", description = "Server error", content = @Content)})
     @GetMapping("/auth/me")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody

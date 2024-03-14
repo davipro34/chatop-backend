@@ -104,6 +104,14 @@ public class RentalController {
 		return rentalService.updateRental(existingRental, id);
 	}
 
+	@Operation(summary = "Create a new rental", 
+           description = "This operation creates a new rental with the provided details and returns the created rental.")
+	@ApiResponses(value = { 
+    	@ApiResponse(responseCode = "200", description = "Rental created successfully", content = { 
+			@Content(mediaType = "application/json", schema = @Schema(implementation = RentalDTO.class)) }),
+    	@ApiResponse(responseCode = "400", description = "Invalid input", content = @Content), 
+    	@ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content), 
+    	@ApiResponse(responseCode = "500", description = "Server error", content = @Content) })
 	@PostMapping(value = "/rentals")
 	public ResponseEntity<RentalDTO> postRental(
 		@RequestParam("name") String name,
