@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.ObjectPostProcessor;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -78,11 +79,11 @@ public class SpringSecurityConfig {
         return NimbusJwtDecoder.withPublicKey(rsaPublicKey).build();
     }
 
-	@Bean
-	AuthenticationManager authenticationManager(HttpSecurity http, BCryptPasswordEncoder bCryptPasswordEncoder,
-			UserDetailsService userDetailService) throws Exception {
-		return http.getSharedObject(AuthenticationManagerBuilder.class).userDetailsService(userDetailService)
-				.passwordEncoder(bCryptPasswordEncoder).and().build();
-	}
+    @Bean
+    public AuthenticationManager authenticationManager(UserDetailsService userDetailService, BCryptPasswordEncoder bCryptPasswordEncoder, ObjectPostProcessor<Object> objectPostProcessor) throws Exception {
+        AuthenticationManagerBuilder builder = new AuthenticationManagerBuilder(objectPostProcessor);
+        builder.userDetailsService(userDetailService).passwordEncoder(bCryptPasswordEncoder);
+        return builder.build();
+    }
 
 }

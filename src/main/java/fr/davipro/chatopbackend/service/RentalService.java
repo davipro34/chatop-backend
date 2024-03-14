@@ -9,7 +9,6 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,12 +16,9 @@ import org.springframework.transaction.annotation.Transactional;
 import jakarta.persistence.EntityManager;
 
 import fr.davipro.chatopbackend.dto.RentalDTO;
-import fr.davipro.chatopbackend.dto.UserDTO;
-import fr.davipro.chatopbackend.exception.UserNotFoundException;
 import fr.davipro.chatopbackend.mapper.DTOToRentalMapper;
 import fr.davipro.chatopbackend.mapper.RentalToDTOMapper;
 import fr.davipro.chatopbackend.model.Rental;
-import fr.davipro.chatopbackend.model.User;
 import fr.davipro.chatopbackend.repository.RentalRepository;
 import fr.davipro.chatopbackend.repository.UserRepository;
 
@@ -71,34 +67,6 @@ public class RentalService {
         } else {
             return Optional.empty();
         }
-    }
-    
-    @Transactional
-    public RentalDTO addRental(RentalDTO rentalDTO, String email) {
-        // Convert DTO to entity
-        Rental rental = dtoToRentalMapper.createNew(rentalDTO);
-        
-        // Get current user
-        UserDTO currentUserDTO = userService.getCurrentUserByEmail(email);
-        if (currentUserDTO == null) {
-            throw new UserNotFoundException("User not found with email: " + email);
-        }
-        Integer currentUserId = currentUserDTO.getId();
-        
-        // Fetch user
-        Optional<User> ownerOptional = userRepository.findById(currentUserId);
-        if (ownerOptional.isPresent()) {
-            rental.setOwner(ownerOptional.get());
-        } else {
-            throw new UserNotFoundException("User not found with id " + currentUserId + " and email " + email);
-        }
-        
-        // Persist entity
-        Rental savedRental = saveOrUpdate(rental);
-        
-        // Convert the registered entity to DTO
-        RentalDTO savedRentalDTO = rentalToDTOMapper.apply(savedRental);
-        return savedRentalDTO;
     }
 
     public RentalDTO updateRental(RentalDTO rentalDTO, Integer id) {
