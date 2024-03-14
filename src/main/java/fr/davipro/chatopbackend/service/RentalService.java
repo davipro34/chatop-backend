@@ -81,8 +81,8 @@ public class RentalService {
         Rental rental = dtoToRentalMapper.createNew(rentalDTO);
     
         // Récupérer l'utilisateur qui est le propriétaire du Rental
-        User owner = userRepository.findById(rentalDTO.getOwnerId())
-            .orElseThrow(() -> new RuntimeException("User not found with id " + rentalDTO.getOwnerId()));
+        User owner = userRepository.findById(rentalDTO.getOwner_id())
+            .orElseThrow(() -> new RuntimeException("User not found with id " + rentalDTO.getOwner_id()));
         
         // Ici, nous utilisons EntityManager pour persister ou mettre à jour le propriétaire dans la même session Hibernate que la persistance de la location.
         entityManager.persist(owner);

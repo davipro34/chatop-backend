@@ -22,13 +22,13 @@ public class RentalDTO {
     private BigDecimal price;
     private String picture;
     private String description;
-    private Integer ownerId;
+    private Integer owner_id;
     
     @Schema(type = "string", format = "date", example = "2022/12/31", description = "The creation date is in format yyyy/MM/dd")
     @JsonFormat(pattern = "yyyy/MM/dd")
-    private LocalDateTime createdAt;
+    private LocalDateTime created_at;
 
     @Schema(type = "string", format = "date", example = "2022/12/31", description = "The updated date is in format yyyy/MM/dd")
     @JsonFormat(pattern = "yyyy/MM/dd")
-    private LocalDateTime updatedAt;
+    private LocalDateTime updated_at;
 }

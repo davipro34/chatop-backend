@@ -99,7 +99,7 @@ public class RentalController {
 		existingRental.setPrice(price);
 		existingRental.setDescription(description);
 	
-		existingRental.setUpdatedAt(LocalDateTime.now());
+		existingRental.setUpdated_at(LocalDateTime.now());
 	
 		return rentalService.updateRental(existingRental, id);
 	}
@@ -130,7 +130,7 @@ public class RentalController {
 		rentalDTO.setSurface(surface);
 		rentalDTO.setPrice(price);
 		rentalDTO.setDescription(description);
-		rentalDTO.setOwnerId(currentUser.getId());
+		rentalDTO.setOwner_id(currentUser.getId());
 
 		// Stocker l'image et obtenir son URL
 		String pictureUrl = rentalService.storeFile(picture);

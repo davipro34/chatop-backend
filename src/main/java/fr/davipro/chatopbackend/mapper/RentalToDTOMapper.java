@@ -19,9 +19,9 @@ public class RentalToDTOMapper implements Function<Rental, RentalDTO> {
             .price(rental.getPrice())
             .picture(rental.getPicture())
             .description(rental.getDescription())
-            .ownerId(rental.getOwner().getId())
-            .createdAt(rental.getCreatedAt())
-            .updatedAt(rental.getUpdatedAt())
+            .owner_id(rental.getOwner().getId())
+            .created_at(rental.getCreatedAt())
+            .updated_at(rental.getUpdatedAt())
             .build();
     }
 }

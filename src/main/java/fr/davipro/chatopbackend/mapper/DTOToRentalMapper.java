@@ -15,8 +15,8 @@ public class DTOToRentalMapper {
         rental.setPrice(rentalDTO.getPrice());
         rental.setPicture(rentalDTO.getPicture());
         rental.setDescription(rentalDTO.getDescription());
-        rental.setCreatedAt(rentalDTO.getCreatedAt());
-        rental.setUpdatedAt(rentalDTO.getUpdatedAt());
+        rental.setCreatedAt(rentalDTO.getCreated_at());
+        rental.setUpdatedAt(rentalDTO.getUpdated_at());
 
 
         // Code original pour définir le propriétaire de la location en fonction de rentalDTO.getOwnerId()
@@ -41,10 +41,10 @@ public class DTOToRentalMapper {
             rental.setPicture(rentalDTO.getPicture());
         }
         rental.setDescription(rentalDTO.getDescription());
-        if (rentalDTO.getCreatedAt() != null) {
-            rental.setCreatedAt(rentalDTO.getCreatedAt());
+        if (rentalDTO.getCreated_at() != null) {
+            rental.setCreatedAt(rentalDTO.getCreated_at());
         }
-        rental.setUpdatedAt(rentalDTO.getUpdatedAt());
+        rental.setUpdatedAt(rentalDTO.getUpdated_at());
         return rental;
     }
 
