@@ -6,10 +6,14 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.server.ResponseStatusException;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -21,7 +25,9 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 import fr.davipro.chatopbackend.dto.RentalDTO;
 import fr.davipro.chatopbackend.dto.RentalsDTO;
+import fr.davipro.chatopbackend.dto.UserDTO;
 import fr.davipro.chatopbackend.service.RentalService;
+import fr.davipro.chatopbackend.service.UserService;
 
 
 @Tag(name = "Rental", description = "Rental management APIs")
@@ -29,9 +35,11 @@ import fr.davipro.chatopbackend.service.RentalService;
 public class RentalController {
 
 	private RentalService rentalService;
+	private UserService userService;
 
-	public RentalController(RentalService rentalService) {
+	public RentalController(RentalService rentalService, UserService userService) {
 		this.rentalService = rentalService;
+		this.userService = userService;
 	}
 
 	@Operation(summary = "Retrieve a list of all rentals", description = "Get a list of rentals. The response is a list of Rental objects with an ID, name, surface, price, picture, description, ID owner, created date and updated date.")
@@ -94,5 +102,36 @@ public class RentalController {
 		existingRental.setUpdatedAt(LocalDateTime.now());
 	
 		return rentalService.updateRental(existingRental, id);
+	}
+
+	@PostMapping(value = "/rentals")
+	public ResponseEntity<RentalDTO> postRental(
+		@RequestParam("name") String name,
+		@RequestParam("surface") BigDecimal surface,
+		@RequestParam("price") BigDecimal price,
+		@RequestParam("picture") MultipartFile picture,
+		@RequestParam("description") String description,
+		Authentication authentication
+	) {
+    	// Récupérer l'utilisateur actuellement authentifié
+    	UserDTO currentUser = userService.getCurrentUser(authentication);
+
+		// Créer un nouveau RentalDTO
+		RentalDTO rentalDTO = new RentalDTO();
+		rentalDTO.setName(name);
+		rentalDTO.setSurface(surface);
+		rentalDTO.setPrice(price);
+		rentalDTO.setDescription(description);
+		rentalDTO.setOwnerId(currentUser.getId());
+
+		// Stocker l'image et obtenir son URL
+		String pictureUrl = rentalService.storeFile(picture);
+		rentalDTO.setPicture(pictureUrl);
+
+		// Ajouter le nouveau Rental à la base de données
+		RentalDTO newRental = rentalService.addRental(rentalDTO);
+
+		// Retourner le nouveau Rental
+		return ResponseEntity.ok(newRental);
 	}
 }

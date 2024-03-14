@@ -19,7 +19,9 @@ import fr.davipro.chatopbackend.dto.RentalDTO;
 import fr.davipro.chatopbackend.mapper.DTOToRentalMapper;
 import fr.davipro.chatopbackend.mapper.RentalToDTOMapper;
 import fr.davipro.chatopbackend.model.Rental;
+import fr.davipro.chatopbackend.model.User;
 import fr.davipro.chatopbackend.repository.RentalRepository;
+import fr.davipro.chatopbackend.repository.UserRepository;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
@@ -35,6 +37,9 @@ public class RentalService {
 
     @Autowired
     private RentalRepository rentalRepository;
+
+    @Autowired
+    private UserRepository userRepository;
 
     @Autowired
     private EntityManager entityManager;
@@ -68,6 +73,29 @@ public class RentalService {
         dtoToRentalMapper.updateExisting(rentalDTO, rental);
         rentalRepository.save(rental);
         return rentalDTO;
+    }
+
+    @Transactional
+    public RentalDTO addRental(RentalDTO rentalDTO) {
+        // Convertir le RentalDTO en Rental
+        Rental rental = dtoToRentalMapper.createNew(rentalDTO);
+    
+        // Récupérer l'utilisateur qui est le propriétaire du Rental
+        User owner = userRepository.findById(rentalDTO.getOwnerId())
+            .orElseThrow(() -> new RuntimeException("User not found with id " + rentalDTO.getOwnerId()));
+        
+        // Ici, nous utilisons EntityManager pour persister ou mettre à jour le propriétaire dans la même session Hibernate que la persistance de la location.
+        entityManager.persist(owner);
+        
+        rental.setOwner(owner);
+    
+        // Enregistrer le nouveau Rental dans la base de données
+        Rental savedRental = rentalRepository.save(rental);
+    
+        // Convertir le Rental enregistré en RentalDTO
+        RentalDTO savedRentalDTO = rentalToDTOMapper.apply(savedRental);
+    
+        return savedRentalDTO;
     }
 
     // Here we use EntityManager to persist or update the owner in the same hibernate session as the persistence of the rental.
