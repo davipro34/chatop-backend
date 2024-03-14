@@ -26,6 +26,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import fr.davipro.chatopbackend.dto.JwtResponseDTO;
 import fr.davipro.chatopbackend.dto.UserDTO;
+import fr.davipro.chatopbackend.dto.UserResponseDTO;
 import fr.davipro.chatopbackend.model.User;
 
 @RestController
@@ -81,14 +82,14 @@ public class AuthController {
     @Operation(summary = "Get current user", description = "This operation returns the details of the currently authenticated user.")
     @ApiResponses(value = { 
         @ApiResponse(responseCode = "200", description = "User details retrieved successfully", content = { 
-            @Content(mediaType = "application/json", schema = @Schema(implementation = UserDTO.class)) }),
-    @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content), 
-    @ApiResponse(responseCode = "500", description = "Server error", content = @Content)})
+            @Content(mediaType = "application/json", schema = @Schema(implementation = UserResponseDTO.class)) }),
+        @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content), 
+        @ApiResponse(responseCode = "500", description = "Server error", content = @Content)})
     @GetMapping("/auth/me")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public ResponseEntity<UserDTO> getCurrentUser(Authentication authentication) {
-        UserDTO userDTO = userService.getCurrentUser(authentication);
+    public ResponseEntity<UserResponseDTO> getCurrentUser(Authentication authentication) {
+        UserResponseDTO userDTO = userService.getCurrentUserResponse(authentication);
         return ResponseEntity.ok(userDTO);
     }
 }

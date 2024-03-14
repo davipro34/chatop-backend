@@ -9,7 +9,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import fr.davipro.chatopbackend.dto.UserDTO;
+import fr.davipro.chatopbackend.dto.UserResponseDTO;
 import fr.davipro.chatopbackend.mapper.UserToDTOMapper;
+import fr.davipro.chatopbackend.mapper.UserToResponseDTOMapper;
 import fr.davipro.chatopbackend.model.User;
 import fr.davipro.chatopbackend.repository.UserRepository;
 
@@ -23,6 +25,9 @@ public class UserService {
 
     @Autowired
     private UserToDTOMapper userToDTOMapper;
+
+    @Autowired
+    private UserToResponseDTOMapper userToResponseDTOMapper;
 
     public Iterable<User> getUsers() {
         return userRepository.findAll();
@@ -60,8 +65,14 @@ public class UserService {
     return userToDTOMapper.apply(user);
     }
 
-    public UserDTO getCurrentUserByEmail(String email) {
+    // public UserDTO getCurrentUserByEmail(String email) {
+    //     User user = findByEmail(email);
+    //     return userToDTOMapper.apply(user);
+    // }
+
+    public UserResponseDTO getCurrentUserResponse(Authentication authentication) {
+        String email = authentication.getName();
         User user = findByEmail(email);
-        return userToDTOMapper.apply(user);
+        return userToResponseDTOMapper.apply(user);
     }
 }
