@@ -24,6 +24,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
+import fr.davipro.chatopbackend.dto.JwtResponseDTO;
 import fr.davipro.chatopbackend.dto.UserDTO;
 import fr.davipro.chatopbackend.model.User;
 
@@ -49,19 +50,21 @@ public class AuthController {
     @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content), 
     @ApiResponse(responseCode = "500", description = "Server error", content = @Content) })
     @PostMapping("/auth/register")
-    public ResponseEntity<User> registerUser(@RequestBody User user) {
+    public ResponseEntity<JwtResponseDTO> registerUser(@RequestBody User user) {
         User registeredUser = userService.registerUser(user);
-        return ResponseEntity.ok(registeredUser);
+        Authentication authentication = new UsernamePasswordAuthenticationToken(registeredUser.getEmail(), registeredUser.getPassword());
+        String token = jwtService.generateToken(authentication);
+        return ResponseEntity.ok(JwtResponseDTO.builder().token(token).build());
     }
     
     @Operation(summary = "Log in a user", description = "This operation logs in a user with the provided details and returns a token.")
     @ApiResponses(value = { 
         @ApiResponse(responseCode = "200", description = "User logged in successfully", content = { 
-            @Content(mediaType = "application/json", schema = @Schema(implementation = String.class)) }),
-    @ApiResponse(responseCode = "401", description = "Invalid login credentials", content = @Content), 
-    @ApiResponse(responseCode = "500", description = "Server error", content = @Content)})
+            @Content(mediaType = "application/json", schema = @Schema(implementation = JwtResponseDTO.class)) }),
+        @ApiResponse(responseCode = "401", description = "Invalid login credentials", content = @Content), 
+        @ApiResponse(responseCode = "500", description = "Server error", content = @Content)})
     @PostMapping("/auth/login")
-    public ResponseEntity<String> login(@RequestBody @Valid UserDTO userDto) {
+    public ResponseEntity<JwtResponseDTO> login(@RequestBody @Valid UserDTO userDto) {
         try {
             Authentication authenticate = authenticationManager
                 .authenticate(new UsernamePasswordAuthenticationToken(userDto.getLogin(), userDto.getPassword()));
@@ -69,7 +72,7 @@ public class AuthController {
             String token = jwtService.generateToken(authenticate);
             logger.info("Token is : " + token);
     
-            return ResponseEntity.ok(token);
+            return ResponseEntity.ok(JwtResponseDTO.builder().token(token).build());
         } catch (BadCredentialsException ex) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
