@@ -20,7 +20,6 @@ import fr.davipro.chatopbackend.mapper.DTOToRentalMapper;
 import fr.davipro.chatopbackend.mapper.RentalToDTOMapper;
 import fr.davipro.chatopbackend.model.Rental;
 import fr.davipro.chatopbackend.repository.RentalRepository;
-import fr.davipro.chatopbackend.repository.UserRepository;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
@@ -38,16 +37,10 @@ public class RentalService {
     private RentalRepository rentalRepository;
 
     @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
     private EntityManager entityManager;
 
     @Autowired
     private Cloudinary cloudinary;
-
-    @Autowired
-    private UserService userService;
 
     public List<RentalDTO> getRentals() {
         Iterable<Rental> rentals = rentalRepository.findAll();
@@ -92,7 +85,8 @@ public class RentalService {
     public String storeFile(MultipartFile file) {
         try {
             File uploadedFile = convertMultiPartToFile(file);
-            Map uploadResult = cloudinary.uploader().upload(uploadedFile, ObjectUtils.emptyMap());
+            @SuppressWarnings("unchecked") // because of the cloudinary upload method which returns a raw map
+            Map<String, Object> uploadResult = (Map<String, Object>) cloudinary.uploader().upload(uploadedFile, ObjectUtils.emptyMap());
             uploadedFile.delete();
             return uploadResult.get("url").toString();
         } catch (IOException e) {
