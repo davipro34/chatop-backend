@@ -65,11 +65,6 @@ public class UserService {
     return userToDTOMapper.apply(user);
     }
 
-    // public UserDTO getCurrentUserByEmail(String email) {
-    //     User user = findByEmail(email);
-    //     return userToDTOMapper.apply(user);
-    // }
-
     public UserResponseDTO getCurrentUserResponse(Authentication authentication) {
         String email = authentication.getName();
         User user = findByEmail(email);

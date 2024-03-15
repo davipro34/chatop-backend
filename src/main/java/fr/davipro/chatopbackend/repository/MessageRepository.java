@@ -7,5 +7,4 @@ import fr.davipro.chatopbackend.model.Message;
 
 @Repository
 public interface MessageRepository extends JpaRepository<Message, Integer>{
-
 }
