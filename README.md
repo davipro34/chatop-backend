@@ -3,15 +3,18 @@
 ## Description
 
 The ChaTop API operates as the server for the ChaTop application.
-Built with Spring Boot 3 and Java 17, it integrates Spring-doc OpenAPI and Swagger UI to provide thorough documentation.
+Built with Spring Boot 3 and Java 17, it integrates Spring-doc OpenAPI and Swagger UI to provide thorough documentation.  
+
+A Front-End application using this API is here :  
+- https://github.com/OpenClassrooms-Student-Center/Developpez-le-back-end-en-utilisant-Java-et-Spring
 
 ## Features
 
 The ChaTop API includes the following principal features:
 
-- User Authentication with **JWT** (utilizing io.jsonwebtoken library)
+- User Authentication with **JWT**
 - User registration
-- Rental creation
+- Rental creation with upload picture
 - Rental display
 - Rental update
 - Sending Messages
@@ -23,21 +26,35 @@ Prior to executing the ChaTop Backend API, adhere to these installation procedur
 1. Clone this repository.
 2. Install JDK 17 (Java Development Kit) on your local machine.
 3. Install Maven locally.
-4. Install MySQL on your local machine and create a database for the application.
-5. Configure the necessary environment variables in your system or within your IDE before running the application.
+4. Install MySQL (on your local machine or in a Docker container) and create a database for the application.
+5. Create a free account on cloudinary.com for picture hosting. 
+6. Configure the necessary environment variables in your system or within your IDE before running the application.
 
-### Necessary environment variables
+### Necessary application configuration
+Copy src/main/resources/application.properties.sample and rename it at application.properties in the same directory.
+Configure it with your information or add references to your environment variables.
 
+### Possibly necessary environment variables
+If you prefer to use environment variables
 - `MYSQL_URL`: The url of your MySQL database. For example, `jdbc:mysql://localhost:3306/`.
-- `MYSQL_DATABASE`: The name of your MySQL database. For example, `db_chatop`.
+- `MYSQL_DATABASE`: The name of your MySQL database. For example, `chatop_db`.
 - `MYSQL_USER`: Your MySQL username.mysql_database
 - `MYSQL_PASSWORD`: Your MySQL password.
 
+- `COUDINARY_CLOUDNAME`: The name of your cloud.
+- `CLOUDINARY_APIKEY`: Your Cloudinary API key
+- `CLOUDINARY_APISECRET`: Your Cloudinary Secret key
+
 ### Necessary SQL database configuration
 
-You must use this SQL script file for creating the tables in the database :
+You can use this SQL script file for creating the tables in the database :
 
 - [SQL Script](src/main/resources/scripts/sql/sql_minus_updated.sql)
+
+And optionally you have the possibility to use a parameter in application.properties to (re-)initialize the database for you : 
+- spring.sql.init.mode=
+
+Consider configuring the `utf8mb4_unicode_ci` encoding for your database as well as the tables.
 
 ## Executing the application
 
@@ -45,17 +62,24 @@ You must use this SQL script file for creating the tables in the database :
 
 - Generate a JAR in the root folder of the project by executing:
   ```bash
-  mvn clean install spring-boot:run
+  mvn clean install
+
+- Launch the application by executing
+  ```bash
+  spring-boot:run
 
 ## Conducting tests using Postman
 
-You can use [Postman](https://www.postman.com/) to test the ChaTop API. Download the Postman collection and environment script:
+You can use [Postman](https://www.postman.com/) to test the ChaTop API.  
+Download the Postman collection and environment script:
 
-- [ChaTop API Postman Collection](src/main/resources/scripts/postnam/rental.postman_collection.json)
+- [ChaTop API Postman Collection](src/main/resources/scripts/postnam/rental.postman_collection.json)  
+- Note: The only two unauthenticated endpoints are `/api/auth/register` and `/api/auth/login`  
+- It is recommended to create a first user by sending a POST request to the `/api/auth/register` endpoint and retrieve the returned `JWT` token to authenticate requests. 
 
 ## Conducting tests using Swagger UI
 - Run the application ChaTop API
-- Access the Swagger UI documentation at http://localhost:8080/swagger-ui/index.html
+- Access the Swagger UI documentation at http://localhost:3001/api/swagger-ui/index.html
 - Register a user by sending a POST request to the `/api/auth/register` endpoint
 - Login by sending a POST request to the `/api/auth/login` endpoint
 - Copy the JWT token from the response
@@ -65,21 +89,15 @@ You can use [Postman](https://www.postman.com/) to test the ChaTop API. Download
 
 ## The following technologies are employed in the development of the ChaTop backend application:
 
-- **Java:** Version 17 [![Java Version](https://img.shields.io/badge/Java-17-blue)](https://img.shields.io/badge/Java-17-blue)
-- **Spring Boot:** Version 3.1.4 [![Spring Boot Version](https://img.shields.io/badge/Spring%20Boot-3.1.4-brightgreen)](https://img.shields.io/badge/Spring%20Boot-3.1.4-brightgreen)
-- **Spring Security:** Version 6.1.5 [![Spring Security Version](https://img.shields.io/badge/Spring%20Security-6.1.5-orange)](https://img.shields.io/badge/Spring%20Security-6.1.5-orange)
-- **Spring Web:** Starter for building web applications [![Spring Web](https://img.shields.io/badge/Spring%20Web-informational)](https://img.shields.io/badge/Spring%20Web-informational)
-- **MySQL Connector/J:** Runtime dependency for MySQL database connectivity [![MySQL Connector/J](https://img.shields.io/badge/MySQL%20Connector%2FJ-informational)](https://img.shields.io/badge/MySQL%20Connector%2FJ-informational)
-- **Project Lombok:** Used for reducing boilerplate code [![Project Lombok](https://img.shields.io/badge/Project%20Lombok-informational)](https://img.shields.io/badge/Project%20Lombok-informational)
+- **Java:** Version 17
+- **Spring Boot:** Version 3.2.3
+- **Spring Security:** Starter for securing applications
+- **Spring Web:** Starter for building web applications
+- **MySQL Connector/J:** Runtime dependency for MySQL database connectivity
+- **Project Lombok:** Used for reducing boilerplate code
 - **JWT (JSON Web Token):** Java library for working with JSON Web Tokens
-  - jjwt-api: Version 0.11.5 [![jjwt-api](https://img.shields.io/badge/jjwt--api-0.11.5-yellow)](https://img.shields.io/badge/jjwt--api-0.11.5-yellow)
-  - jjwt-impl: Version 0.11.5 [![jjwt-impl](https://img.shields.io/badge/jjwt--impl-0.11.5-yellow)](https://img.shields.io/badge/jjwt--impl-0.11.5-yellow)
-  - jjwt-jackson: Version 0.11.5 [![jjwt-jackson](https://img.shields.io/badge/jjwt--jackson-0.11.5-yellow)](https://img.shields.io/badge/jjwt--jackson-0.11.5-yellow)
-- **Spring Data JPA:** Starter for using Spring Data JPA with Hibernate [![Spring Data JPA](https://img.shields.io/badge/Spring%20Data%20JPA-informational)](https://img.shields.io/badge/Spring%20Data%20JPA-informational)
-- **Spring Validation:** Starter for validation in Spring Boot applications [![Spring Validation](https://img.shields.io/badge/Spring%20Validation-informational)](https://img.shields.io/badge/Spring%20Validation-informational)
-- **javax.annotation:** API for the JavaTM programming language that defines a contract for the use of annotations [![javax.annotation](https://img.shields.io/badge/javax.annotation-informational)](https://img.shields.io/badge/javax.annotation-informational)
-- **Passay:** A password policy enforcement library
-  - Version 1.6.2 [![Passay 1.6.2](https://img.shields.io/badge/Passay-1.6.2-informational)](https://img.shields.io/badge/Passay-1.6.2-informational)
-  - Version 1.0 [![Passay 1.0](https://img.shields.io/badge/Passay-1.0-informational)](https://img.shields.io/badge/Passay-1.0-informational)
-- **Springdoc OpenAPI:** Starter for OpenAPI and Swagger UI documentation [![Springdoc OpenAPI Version](https://img.shields.io/badge/Springdoc%20OpenAPI-2.0.2-green)](https://img.shields.io/badge/Springdoc%20OpenAPI-2.0.2-green)
-  - Version 2.0.2 [![Springdoc OpenAPI 2.0.2](https://img.shields.io/badge/Springdoc%20OpenAPI-2.0.2-green)](https://img.shields.io/badge/Springdoc%20OpenAPI-2.0.2-green)
+- **Spring Data JPA:** Starter for using Spring Data JPA with Hibernate
+- **Springdoc OpenAPI:** Starter for OpenAPI and Swagger UI documentation
+  - Version 2.3.0
+- **Cloudinary-http45:** Cloudinary service (free account)  for uploading and hosting a picture
+  - Version 1.38.0

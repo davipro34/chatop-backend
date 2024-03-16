@@ -7,5 +7,4 @@ import fr.davipro.chatopbackend.model.Rental;
 
 @Repository
 public interface RentalRepository extends JpaRepository<Rental, Integer>{
-
 }
