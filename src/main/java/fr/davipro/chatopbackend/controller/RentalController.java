@@ -30,7 +30,7 @@ import fr.davipro.chatopbackend.service.RentalService;
 import fr.davipro.chatopbackend.service.UserService;
 
 
-@Tag(name = "Rental", description = "Rental management APIs")
+@Tag(name = "Rental", description = "Rental management endpoints")
 @RestController
 public class RentalController {
 

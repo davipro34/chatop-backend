@@ -13,8 +13,10 @@ import fr.davipro.chatopbackend.service.MessageService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import fr.davipro.chatopbackend.dto.MessageDTO;
 
+@Tag(name = "Message", description = "Message management endpoints")
 @RestController
 public class MessageController {
 

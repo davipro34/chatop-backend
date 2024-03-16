@@ -1,5 +1,8 @@
 package fr.davipro.chatopbackend.controller;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +19,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
 import fr.davipro.chatopbackend.service.JWTService;
 import fr.davipro.chatopbackend.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -23,12 +30,13 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import jakarta.validation.Valid;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import fr.davipro.chatopbackend.dto.JwtResponseDTO;
 import fr.davipro.chatopbackend.dto.UserDTO;
 import fr.davipro.chatopbackend.dto.UserResponseDTO;
 import fr.davipro.chatopbackend.model.User;
 
+@Tag(name = "Auth", description = "Auth management endpoints")
 @RestController
 public class AuthController {
 
@@ -65,17 +73,33 @@ public class AuthController {
         @ApiResponse(responseCode = "401", description = "Invalid login credentials", content = @Content), 
         @ApiResponse(responseCode = "500", description = "Server error", content = @Content)})
     @PostMapping("/auth/login")
-    public ResponseEntity<JwtResponseDTO> login(@RequestBody @Valid UserDTO userDto) {
+    public ResponseEntity<JwtResponseDTO> login(@RequestBody String body) {
         try {
+            ObjectMapper mapper = new ObjectMapper();
+            JsonNode jsonNode = mapper.readTree(body);
+
+            if (jsonNode.has("email")) {
+                ((ObjectNode) jsonNode).put("login", jsonNode.get("email").asText());
+                ((ObjectNode) jsonNode).remove("email");
+            }
+
+            UserDTO userDto = mapper.treeToValue(jsonNode, UserDTO.class);
+
             Authentication authenticate = authenticationManager
                 .authenticate(new UsernamePasswordAuthenticationToken(userDto.getLogin(), userDto.getPassword()));
-    
+
+            
+                
             String token = jwtService.generateToken(authenticate);
             logger.info("Token is : " + token);
-    
+
             return ResponseEntity.ok(JwtResponseDTO.builder().token(token).build());
         } catch (BadCredentialsException ex) {
+            Map<String, String> bodyResponse = new HashMap<>();
+            bodyResponse.put("message", "error");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 
