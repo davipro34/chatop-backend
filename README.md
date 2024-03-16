@@ -32,14 +32,18 @@ Prior to executing the ChaTop Backend API, adhere to these installation procedur
 
 ### Necessary application configuration
 Copy src/main/resources/application.properties.sample and rename it at application.properties in the same directory.
-Configure it with your informations
+Configure it with your information or add references to your environment variables.
 
 ### Possibly necessary environment variables
-
+If you prefer to use environment variables
 - `MYSQL_URL`: The url of your MySQL database. For example, `jdbc:mysql://localhost:3306/`.
 - `MYSQL_DATABASE`: The name of your MySQL database. For example, `chatop_db`.
 - `MYSQL_USER`: Your MySQL username.mysql_database
 - `MYSQL_PASSWORD`: Your MySQL password.
+
+- `COUDINARY_CLOUDNAME`: The name of your cloud.
+- `CLOUDINARY_APIKEY`: Your Cloudinary API key
+- `CLOUDINARY_APISECRET`: Your Cloudinary Secret key
 
 ### Necessary SQL database configuration
 
