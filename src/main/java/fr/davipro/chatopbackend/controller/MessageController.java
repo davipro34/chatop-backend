@@ -23,7 +23,7 @@ public class MessageController {
     @Autowired
     private MessageService messageService;
 
-    @Operation(summary = "Post a new message", description = "This endpoint allows a user to post a new message.")
+    @Operation(summary = "Post a new message", description = "This endpoint allows a user to post a new message to the owner of the rental in question.")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Message posted successfully"),
         @ApiResponse(responseCode = "400", description = "Invalid input"),
