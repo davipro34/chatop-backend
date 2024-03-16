@@ -45,13 +45,16 @@ public class UserService {
         userRepository.deleteById(id);
     }
 
-    public User registerUser(User user) {
-        Optional<User> existingUser = userRepository.findByEmail(user.getEmail());
+    public UserDTO registerUser(UserDTO userDTO) {
+        Optional<User> existingUser = userRepository.findByEmail(userDTO.getEmail());
         if (existingUser.isPresent()) {
             throw new RuntimeException("This email is already in use.");
         }
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        return userRepository.save(user);
+        User user = new User();
+        user.setEmail(userDTO.getEmail());
+        user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
+        user = userRepository.save(user);
+        return userToDTOMapper.apply(user);
     }
 
     public User findByEmail(String email) {

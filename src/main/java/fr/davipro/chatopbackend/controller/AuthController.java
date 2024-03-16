@@ -59,9 +59,9 @@ public class AuthController {
     @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content), 
     @ApiResponse(responseCode = "500", description = "Server error", content = @Content) })
     @PostMapping("/auth/register")
-    public ResponseEntity<JwtResponseDTO> registerUser(@RequestBody User user) {
-        User registeredUser = userService.registerUser(user);
-        Authentication authentication = new UsernamePasswordAuthenticationToken(registeredUser.getEmail(), registeredUser.getPassword());
+    public ResponseEntity<JwtResponseDTO> registerUser(@RequestBody UserDTO userDTO) {
+        UserDTO registeredUserDTO = userService.registerUser(userDTO);
+        Authentication authentication = new UsernamePasswordAuthenticationToken(registeredUserDTO.getEmail(), registeredUserDTO.getPassword());
         String token = jwtService.generateToken(authentication);
         return ResponseEntity.ok(JwtResponseDTO.builder().token(token).build());
     }
