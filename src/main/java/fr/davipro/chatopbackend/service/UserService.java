@@ -52,6 +52,7 @@ public class UserService {
         }
         User user = new User();
         user.setEmail(userDTO.getEmail());
+        user.setName(userDTO.getName());
         user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
         user = userRepository.save(user);
         return userToDTOMapper.apply(user);
