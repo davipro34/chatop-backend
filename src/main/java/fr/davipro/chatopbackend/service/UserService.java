@@ -57,20 +57,21 @@ public class UserService {
         return userToDTOMapper.apply(user);
     }
 
-    public User findByEmail(String email) {
-        return userRepository.findByEmail(email)
+    public UserDTO findByEmail(String email) {
+        User user = userRepository.findByEmail(email)
             .orElseThrow(() -> new UsernameNotFoundException("User not found with email : " + email));
+        return userToDTOMapper.apply(user);
     }
 
     public UserDTO getCurrentUser(Authentication authentication) {
-    String email = authentication.getName();
-    User user = findByEmail(email);
-    return userToDTOMapper.apply(user);
+        String email = authentication.getName();
+        UserDTO userDTO = findByEmail(email);
+        return userDTO;
     }
 
     public UserResponseDTO getCurrentUserResponse(Authentication authentication) {
         String email = authentication.getName();
-        User user = findByEmail(email);
-        return userToResponseDTOMapper.apply(user);
+        UserDTO userDTO = findByEmail(email);
+        return userToResponseDTOMapper.applyFromDTO(userDTO);
     }
 }
