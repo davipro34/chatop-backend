@@ -3,7 +3,10 @@
 ## Description
 
 The ChaTop API operates as the server for the ChaTop application.
-Built with Spring Boot 3 and Java 17, it integrates Spring-doc OpenAPI and Swagger UI to provide thorough documentation.
+Built with Spring Boot 3 and Java 17, it integrates Spring-doc OpenAPI and Swagger UI to provide thorough documentation.  
+
+A Front-End application using this API is here :  
+- https://github.com/OpenClassrooms-Student-Center/Developpez-le-back-end-en-utilisant-Java-et-Spring
 
 ## Features
 
