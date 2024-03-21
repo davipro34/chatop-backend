@@ -77,19 +77,16 @@ public class AuthController {
         try {
             ObjectMapper mapper = new ObjectMapper();
             JsonNode jsonNode = mapper.readTree(body);
-
+            String login;
             if (jsonNode.has("email")) {
-                ((ObjectNode) jsonNode).put("login", jsonNode.get("email").asText());
-                ((ObjectNode) jsonNode).remove("email");
+                login = jsonNode.get("email").asText();
+            } else {
+                login = jsonNode.get("login").asText();
             }
-
-            UserDTO userDto = mapper.treeToValue(jsonNode, UserDTO.class);
+            String password = jsonNode.get("password").asText();
 
             Authentication authenticate = authenticationManager
-                .authenticate(new UsernamePasswordAuthenticationToken(userDto.getLogin(), userDto.getPassword()));
-
-            
-                
+                .authenticate(new UsernamePasswordAuthenticationToken(login, password));
             String token = jwtService.generateToken(authenticate);
             logger.info("Token is : " + token);
 

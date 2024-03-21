@@ -23,11 +23,14 @@ public class DTOToMessageMapper {
 
         // Trouver la location par son ID
         Optional<Rental> rental = rentalRepository.findById(messageDTO.getRental_id());
-        rental.ifPresent(message::setRental);
 
-        // Utiliser l'ID du propriétaire de la location
+        // Si la location est présente, définir la location du message
         if (rental.isPresent()) {
-            User owner = rental.get().getOwner();
+            Rental newRental = rental.get();
+            message.setRental(newRental);
+
+            // Utiliser l'ID du propriétaire de la location
+            User owner = newRental.getOwner();
             message.setUser(owner);
         }
 
